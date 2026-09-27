@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ЛинАлг КФУ">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Линейная алгебра · 1 семестр</title>
+  <style>
+    :root{
+      --bg: light-dark(#f5f7fb,#0c1117);
+      --surface: light-dark(#ffffff,#121a23);
+      --surface-2: light-dark(#eef2f7,#18222e);
+      --text: light-dark(#111827,#f2f5f8);
+      --muted: light-dark(#5f6b7a,#a6b1bf);
+      --border: light-dark(#dce2ea,#2a3746);
+      --accent: light-dark(#2563eb,#70a3ff);
+      --accent-2: light-dark(#e8f0ff,#1d3153);
+      --good: light-dark(#0b7a4b,#44d391);
+      --warn: light-dark(#9a6700,#f5c451);
+      --danger: light-dark(#b42318,#ff8b82);
+      --shadow: 0 12px 40px light-dark(rgba(25,42,70,.10),rgba(0,0,0,.28));
+      --r: 18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55}
+    button,input{font:inherit}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    #app{min-height:100vh;background:var(--bg)}
+    header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+    .header-inner{max-width:1180px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:16px;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
+    .logo{width:40px;height:40px;border-radius:12px;background:var(--accent);color:white;display:grid;place-items:center;font-weight:800;box-shadow:var(--shadow)}
+    .brand h1{font-size:15px;margin:0;white-space:nowrap}
+    .brand p{font-size:12px;color:var(--muted);margin:1px 0 0}
+    nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+    nav button,.ghost-btn,.primary-btn,.tab-btn{border:1px solid var(--border);background:var(--surface);color:var(--text);padding:9px 12px;border-radius:12px;cursor:pointer}
+    nav button.active,.primary-btn{background:var(--accent);border-color:var(--accent);color:white}
+    nav button:hover,.ghost-btn:hover,.tab-btn:hover{background:var(--surface-2)}
+    main{max-width:1180px;margin:0 auto;padding:28px 20px 64px}
+    .view{display:none}.view.active{display:block}
+    .hero{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;align-items:stretch}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow)}
+    .hero-main{padding:30px}
+    .eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+    h2{font-size:clamp(28px,4vw,44px);line-height:1.05;margin:0 0 14px;letter-spacing:-.03em}
+    .hero-main>p{font-size:16px;color:var(--muted);max-width:760px;margin:0 0 20px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}.chip{padding:7px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted);font-size:12px}
+    .hero-side{padding:22px;display:flex;flex-direction:column;justify-content:space-between}
+    .progress-title{display:flex;justify-content:space-between;gap:12px;font-size:13px;font-weight:700}.progress-title span:last-child{color:var(--muted);font-weight:600}
+    .progress{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin:10px 0 16px}.bar{height:100%;background:var(--accent);width:0%;transition:width .25s}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--surface-2)}.stat b{font-size:20px;display:block}.stat span{font-size:11px;color:var(--muted)}
+    .section{margin-top:24px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:12px}.section-head h3{margin:0;font-size:22px}.section-head p{margin:0;color:var(--muted);font-size:13px}
+    .topic-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .topic{padding:18px;cursor:pointer;transition:.15s transform,.15s border-color}.topic:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 55%,var(--border))}.topic-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.topic .num{font-size:11px;color:var(--muted);font-weight:800}.topic h4{margin:6px 0 7px;font-size:18px}.topic p{margin:0;color:var(--muted);font-size:13px}.done{color:var(--good);font-size:12px;font-weight:800}
+    .mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.mini{padding:16px}.mini strong{display:block;margin-bottom:4px}.mini span{font-size:12px;color:var(--muted)}
+    .theory-layout{display:grid;grid-template-columns:270px 1fr;gap:16px}.sidebar{padding:14px;position:sticky;top:82px;height:max-content}.sidebar h3{font-size:13px;color:var(--muted);margin:4px 8px 10px}.side-item{width:100%;text-align:left;border:0;background:transparent;color:var(--text);padding:10px;border-radius:10px;cursor:pointer}.side-item.active{background:var(--accent-2);color:var(--accent);font-weight:800}.side-item small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+    .theory{padding:26px}.crumb{font-size:12px;color:var(--muted);margin-bottom:8px}.theory h2{font-size:34px;max-width:none}.lead{font-size:16px;color:var(--muted)}
+    .explain{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.box{padding:16px;border:1px solid var(--border);border-radius:15px;background:var(--surface-2)}.box h4{margin:0 0 7px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}.box p{margin:0}
+    .formula{padding:16px;border-radius:14px;background:var(--accent-2);border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow:auto;margin:14px 0}
+    .steps{counter-reset:step;display:grid;gap:10px}.step{padding:14px 14px 14px 46px;border:1px solid var(--border);border-radius:14px;position:relative}.step:before{counter-increment:step;content:counter(step);position:absolute;left:14px;top:13px;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--accent);color:#fff;font-size:12px;font-weight:800}
+    .mistake{border-left:4px solid var(--danger);background:color-mix(in srgb,var(--danger) 7%,var(--surface));padding:14px 16px;border-radius:12px;margin-top:16px}.tip{border-left:4px solid var(--good);background:color-mix(in srgb,var(--good) 7%,var(--surface));padding:14px 16px;border-radius:12px;margin-top:16px}
+    .theory-actions{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+    .trainer-head{display:flex;justify-content:space-between;gap:12px;align-items:start}.trainer-card{padding:24px}.task{font-size:21px;font-weight:750;line-height:1.35;margin:18px 0}.answer-row{display:flex;gap:8px;flex-wrap:wrap}.answer-row input{flex:1;min-width:180px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:12px 14px;border-radius:12px}.feedback{margin-top:14px;padding:13px 14px;border-radius:12px;display:none}.feedback.show{display:block}.feedback.ok{background:color-mix(in srgb,var(--good) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--good) 35%,var(--border))}.feedback.bad{background:color-mix(in srgb,var(--danger) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--danger) 35%,var(--border))}
+    .trainer-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}.trainer-tab.active{background:var(--accent-2);color:var(--accent);border-color:var(--accent)}
+    .exam-grid{display:grid;grid-template-columns:1fr 280px;gap:16px}.exam-q{padding:20px}.exam-q h4{margin:0 0 8px}.option{display:block;width:100%;text-align:left;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:12px 13px;border-radius:12px;margin:8px 0;cursor:pointer}.option:hover{background:var(--surface-2)}.option.selected{border-color:var(--accent);background:var(--accent-2)}.exam-side{padding:18px;height:max-content;position:sticky;top:82px}.score-ring{font-size:40px;font-weight:850;margin:4px 0}.muted{color:var(--muted)}
+    .resources{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.resource{padding:18px}.resource h4{margin:0 0 6px}.resource p{font-size:13px;color:var(--muted);margin:0 0 12px}
+    .footer-note{margin-top:28px;padding:14px 16px;border:1px dashed var(--border);border-radius:14px;color:var(--muted);font-size:12px}
+    .search{margin-top:12px}.search input{width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:12px}
+    @media(max-width:900px){.hero,.theory-layout,.exam-grid{grid-template-columns:1fr}.sidebar,.exam-side{position:static}.topic-grid{grid-template-columns:1fr}.resources,.mini-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:620px){nav{display:none}.header-inner{padding:11px 14px}main{padding:20px 14px 44px}.hero-main{padding:22px}.theory{padding:20px}.explain{grid-template-columns:1fr}.resources,.mini-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr 1fr}.task{font-size:18px}}
+  </style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="logo">∑</div>
+        <div><h1>Линейная алгебра · 1 семестр</h1><p>КФУ‑ориентированный тренажёр с объяснениями «на человеческом»</p></div>
+      </div>
+      <nav>
+        <button data-view="home" class="active">Главная</button>
+        <button data-view="theory">Теория</button>
+        <button data-view="trainer">Тренажёр</button>
+        <button data-view="exam">Экзамен</button>
+        <button data-view="resources">Ресурсы</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="view active">
+      <div class="hero">
+        <div class="card hero-main">
+          <div class="eyebrow">Старт с нуля</div>
+          <h2>Матрицы перестанут выглядеть как набор страшных скобок.</h2>
+          <p>Идём от смысла к формуле, от формулы к маленькому примеру, а затем сразу закрепляем на тренажёре. Цель — не «зазубрить», а научиться узнавать тип задачи и понимать, что делать первым.</p>
+          <div class="chips"><span class="chip">матрицы</span><span class="chip">перестановки</span><span class="chip">определители</span><span class="chip">ранг</span><span class="chip">Гаусс</span><span class="chip">векторы</span></div>
+        </div>
+        <div class="card hero-side">
+          <div>
+            <div class="progress-title"><span>Прогресс семестра</span><span id="progressText">0%</span></div>
+            <div class="progress"><div id="progressBar" class="bar"></div></div>
+            <div class="stats"><div class="stat"><b id="doneCount">0</b><span>тем пройдено</span></div><div class="stat"><b id="correctCount">0</b><span>верных ответов</span></div><div class="stat"><b id="streakCount">0</b><span>серия</span></div></div>
+          </div>
+          <button class="primary-btn" onclick="go('theory',1)">Начать с темы 1 →</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div><h3>Маршрут на семестр</h3><p>Собран вокруг тем, которые есть в учебных материалах КФУ; программа конкретной группы может отличаться.</p></div></div>
+        <div id="topicGrid" class="topic-grid"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div><h3>План на сегодня</h3><p>30–40 минут лучше, чем 4 часа перед контрольной.</p></div></div>
+        <div class="mini-grid">
+          <div class="card mini"><strong>10 мин · понять</strong><span>Прочитай одну теорию и вслух объясни себе «зачем это».</span></div>
+          <div class="card mini"><strong>15 мин · решить</strong><span>Сделай 5–8 однотипных задач. После ошибки посмотри разбор.</span></div>
+          <div class="card mini"><strong>10 мин · закрепить</strong><span>Пройди мини‑экзамен и запиши 1–2 ошибки, которые повторяются.</span></div>
+        </div>
+      </div>
+      <div class="footer-note">Важно: это учебный тренажёр, а не официальный курс КФУ. Трек ориентирован на материалы первого семестра КФУ по линейной и векторной алгебре; сверяй список вопросов со своим преподавателем.</div>
+    </section>
+
+    <section id="theory" class="view">
+      <div class="theory-layout">
+        <aside class="card sidebar">
+          <h3>Темы</h3>
+          <div id="sideTopics"></div>
+          <div class="search"><input id="theorySearch" placeholder="Поиск по темам…"></div>
+        </aside>
+        <article id="theoryContent" class="card theory"></article>
+      </div>
+    </section>
+
+    <section id="trainer" class="view">
+      <div class="section-head"><div><h3>Тренажёр</h3><p>Сначала базовые вычисления, потом задачи на понимание.</p></div></div>
+      <div class="trainer-tabs" id="trainerTabs"></div>
+      <div class="card trainer-card">
+        <div class="trainer-head"><div><div class="muted" id="trainerLabel"></div><div class="task" id="taskText"></div></div><button class="ghost-btn" onclick="newTask()">Новая задача</button></div>
+        <div class="answer-row" id="answerRow"></div>
+        <div id="feedback" class="feedback"></div>
+        <div class="theory-actions"><button class="primary-btn" onclick="checkTask()">Проверить</button><button class="ghost-btn" onclick="showHint()">Подсказка</button></div>
+      </div>
+      <div class="footer-note" id="trainerTip">Подсказка: не перескакивай сразу к вычислениям — сначала определи, что за объект перед тобой и какой алгоритм ожидается.</div>
+    </section>
+
+    <section id="exam" class="view">
+      <div class="section-head"><div><h3>Мини‑экзамен</h3><p>12 вопросов по ключевым темам. Никакого штрафа за ошибку — важен разбор.</p></div><button class="primary-btn" onclick="startExam()">Новый вариант</button></div>
+      <div class="exam-grid">
+        <div class="card exam-q">
+          <div class="muted" id="examMeta"></div>
+          <h4 id="examQuestion"></h4>
+          <div id="examOptions"></div>
+          <div id="examFeedback" class="feedback"></div>
+          <div class="theory-actions"><button class="primary-btn" onclick="nextExam()">Следующий вопрос →</button></div>
+        </div>
+        <aside class="card exam-side">
+          <div class="muted">Результат</div><div id="examScore" class="score-ring">0 / 0</div>
+          <div class="progress"><div id="examBar" class="bar"></div></div>
+          <div class="muted" id="examHint">Начни вариант, затем смотри объяснение каждого ответа.</div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="resources" class="view">
+      <div class="section-head"><div><h3>Ресурсы</h3><p>Видео — для интуиции, конспекты — для формулировок, тренажёр — для навыка.</p></div></div>
+      <div class="resources">
+        <div class="card resource"><h4>КФУ · электронный курс</h4><p>Дистанционный курс КФУ по линейной алгебре и аналитической геометрии на Stepik.</p><a href="https://stepik.org/140060" target="_blank" rel="noopener">Открыть курс →</a></div>
+        <div class="card resource"><h4>КФУ · лекции за 1 семестр</h4><p>Учебное пособие КФУ 2024: определения, свойства, примеры и вопросы к экзамену.</p><a href="https://dspace.kpfu.ru/xmlui/bitstream/handle/net/183730/F_posobie_Matem_1_Zhuchkova__Tyuleneva__Khramchenkov__Zakirov.pdf?isAllowed=y&sequence=2" target="_blank" rel="noopener">Открыть PDF →</a></div>
+        <div class="card resource"><h4>3Blue1Brown · визуальная линейная алгебра</h4><p>Очень наглядная серия про векторы, матрицы, определитель, обратную матрицу и собственные значения.</p><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab" target="_blank" rel="noopener">Смотреть плейлист →</a></div>
+        <div class="card resource"><h4>Матрицы как преобразования</h4><p>Глава 3 3Blue1Brown: помогает увидеть смысл матрицы, а не только правила умножения.</p><a href="https://www.youtube.com/watch?v=kYB8IZa5AuE" target="_blank" rel="noopener">Открыть видео →</a></div>
+        <div class="card resource"><h4>Умножение матриц</h4><p>Глава 4: почему правило «строка × столбец» связано с последовательным применением преобразований.</p><a href="https://www.youtube.com/watch?v=XkY2DOUCWMU" target="_blank" rel="noopener">Открыть видео →</a></div>
+        <div class="card resource"><h4>Русская озвучка · обратные матрицы</h4><p>Геометрическая интуиция для систем, обратной матрицы, ранга и нулевого пространства.</p><a href="https://www.youtube.com/watch?v=cLNbq2H6w38" target="_blank" rel="noopener">Открыть видео →</a></div>
+      </div>
+      <div class="footer-note">Видео и внешние курсы открываются вне этого тренажёра. Контент внутри сайта рассчитан на первое знакомство и тренировку; официальные формулировки смотри в материалах своей дисциплины.</div>
+    </section>
+  </main>
+</div>
+
+<script>
+const topics = [
+  {
+    id:1,title:'Матрица: как читать и не путаться',short:'Строки, столбцы, размер, элементы и простейшие операции.',
+    lead:'Матрица — это аккуратно записанная таблица чисел. На первом этапе не нужно приписывать ей магический смысл: просто учимся читать, как в таблице.',
+    blocks:[
+      ['Что это','Матрица A размера m×n имеет m строк и n столбцов. Элемент aᵢⱼ стоит на пересечении i-й строки и j-го столбца.'],
+      ['Зачем','Матрица позволяет хранить сразу много коэффициентов: например, коэффициенты нескольких уравнений или координаты нескольких векторов.'],
+      ['Мини‑пример','A = [[2, -1], [5, 3]]. Тогда a₁₂ = -1, а матрица имеет размер 2×2.']
+    ],
+    formula:'Если A = (aᵢⱼ), то «i» — номер строки, «j» — номер столбца.\nРазмер: число строк × число столбцов.',
+    steps:['Сначала посчитай строки.','Потом посчитай столбцы.','Для aᵢⱼ двигайся на i-ю строку и j-й столбец.','Проверь, что размеры матриц подходят для выбранной операции.'],
+    mistake:'Не путай a₁₂ и a₂₁. Индексы читаются как «строка, затем столбец».',
+    tip:'Полезная привычка: проговаривай размер вслух — «две на три», «три на один».',
+    complete:'Запомни три слова: строка, столбец, размер.'
+  },
+  {
+    id:2,title:'Действия с матрицами',short:'Сложение, умножение на число и матричное умножение.',
+    lead:'С матрицами можно делать привычные операции, но у каждой есть условие. Главное правило: перед вычислением проверь размеры.',
+    blocks:[
+      ['Сложение','Складывать можно матрицы одинакового размера. Складываем элементы на одинаковых позициях.'],
+      ['Умножение на число','Каждый элемент умножается на это число. Это самый простой случай.'],
+      ['Умножение матриц','Если A размера m×k, а B размера k×n, то AB существует и имеет размер m×n. Каждый элемент — это скалярное произведение строки A на столбец B.']
+    ],
+    formula:'(AB)ᵢⱼ = aᵢ₁b₁ⱼ + aᵢ₂b₂ⱼ + … + aᵢₖbₖⱼ\nУмножение существует, когда «внутренние размеры» совпали: (m×k)(k×n).',
+    steps:['Напиши размеры A и B.','Проверь совпадение внутренних размеров.','Для каждой ячейки бери строку первой матрицы и столбец второй.','Перемножь пары чисел и сложи результаты.'],
+    mistake:'Нельзя умножать матрицы «как числа». В общем случае AB ≠ BA, а иногда BA вообще не существует.',
+    tip:'Мысленная команда: «строка первой × столбец второй».',
+    complete:'В первую очередь проверяй размеры, а уже потом считай.'
+  },
+  {
+    id:3,title:'Перестановки и знак',short:'Откуда в определителе берутся + и −.',
+    lead:'Перестановка — это просто новый порядок элементов. В определителе она помогает системно учесть все способы выбрать по одному элементу из каждой строки и каждого столбца.',
+    blocks:[
+      ['Перестановка','Для набора 1,2,3 возможны 123, 132, 213, 231, 312, 321. В общем случае их n! штук.'],
+      ['Инверсия','Пара (i,j) образует инверсию, если i<j, но π(i)>π(j). Число инверсий определяет знак перестановки.'],
+      ['Знак','Если число инверсий чётное — знак +1, если нечётное — −1.']
+    ],
+    formula:'sgn(π) = (−1)^(число инверсий)\nОпределитель можно понимать как сумму по всем перестановкам:\n det(A) = Σ sgn(π) · a₁π(1)a₂π(2)…aₙπ(n).',
+    steps:['Запиши перестановку.','Посчитай инверсии — сколько раз более крупное число стоит слева от меньшего.','Чётно → плюс. Нечётно → минус.','Для 2×2 и 3×3 проще использовать специальные вычислительные приёмы.'],
+    mistake:'Не путай «переставили соседние элементы» и «перестановка чётная/нечётная». Смотрим именно на число инверсий.',
+    tip:'Для экзамена понимай идею знака; для вычислений чаще используй разложение и свойства определителя.',
+    complete:'Перестановка — это порядок; инверсии — способ понять знак.'
+  },
+  {
+    id:4,title:'Определитель',short:'2×2, 3×3, свойства и смысл.',
+    lead:'Определитель — это число, которое вычисляется для квадратной матрицы и помогает понять, например, обратима ли она и как ведёт себя соответствующее линейное преобразование.',
+    blocks:[
+      ['2×2','Для [[a,b],[c,d]]: det A = ad − bc. Это правило нужно знать автоматически.'],
+      ['3×3','Можно считать правилом Саррюса или разложением по строке/столбцу. Для больших порядков удобнее свойства и разложение.'],
+      ['Смысл','Если det A = 0, матрица вырождена: обратной матрицы нет, а строки/столбцы линейно зависимы.']
+    ],
+    formula:'|a  b|      = ad − bc\n|c  d|\n\nРазложение по i-й строке:\ndet A = aᵢ₁Aᵢ₁ + aᵢ₂Aᵢ₂ + … + aᵢₙAᵢₙ.',
+    steps:['Для 2×2 сразу используй ad−bc.','Для 3×3 выбери способ: Саррюс или разложение.','Для большой матрицы сначала ищи строку/столбец с нулями.','Пользуйся свойствами: вынести общий множитель, поменять строки, создать нули.'],
+    mistake:'В Саррюсе нельзя хаотично «рисовать диагонали» без знаков. Лучше перепиши матрицу аккуратно и отделяй плюсы от минусов.',
+    tip:'Перед долгим счётом спроси себя: можно ли упростить определитель свойствами?',
+    complete:'Главная идея: det A = 0 ↔ матрица вырождена.'
+  },
+  {
+    id:5,title:'Минор и алгебраическое дополнение',short:'Мᵢⱼ и Aᵢⱼ без путаницы.',
+    lead:'Тут студенты часто путаются из-за похожих обозначений. Раздели их мысленно: минор — что осталось; дополнение — что осталось плюс знак.',
+    blocks:[
+      ['Минор Mᵢⱼ','Вычёркиваем i-ю строку и j-й столбец, а из оставшихся элементов строим определитель меньшего порядка.'],
+      ['Дополнение Aᵢⱼ','Это минор со знаком: Aᵢⱼ = (−1)^(i+j) Mᵢⱼ.'],
+      ['Шахматный знак','В левом верхнем углу +, дальше знаки чередуются: + − +; − + −; + − +.']
+    ],
+    formula:'Aᵢⱼ = (−1)^(i+j) Mᵢⱼ\nДет по строке i: det A = Σ aᵢⱼ Aᵢⱼ.',
+    steps:['Выбери элемент aᵢⱼ.','Вычеркни его строку и столбец.','Посчитай минор Mᵢⱼ.','Поставь знак (−1)^(i+j). Получишь Aᵢⱼ.'],
+    mistake:'Если индекс i+j нечётный, знак минуса. Если чётный — плюс.',
+    tip:'Нарисуй шахматную доску знаков рядом с матрицей — это сильно уменьшает ошибки.',
+    complete:'Минор = число; дополнение = минор со знаком.'
+  },
+  {
+    id:6,title:'Обратная матрица',short:'Что такое A⁻¹ и когда она существует.',
+    lead:'Обратная матрица — это аналог числа 1/a. У числа a есть обратное 1/a, потому что a·(1/a)=1. Для матрицы роль единицы играет единичная матрица I.',
+    blocks:[
+      ['Определение','A⁻¹ существует, если AA⁻¹ = A⁻¹A = I.'],
+      ['Когда существует','Для квадратной матрицы A обратная существует тогда и только тогда, когда det A ≠ 0.'],
+      ['Как находить','На практике часто используют Гаусса: приписываем справа единичную матрицу и преобразуем A|I в I|A⁻¹.']
+    ],
+    formula:'A A⁻¹ = A⁻¹ A = I\nДля 2×2:\nA⁻¹ = 1/(ad−bc) · [[d,−b],[−c,a]]',
+    steps:['Проверь, что матрица квадратная.','Проверь det A ≠ 0.','Выбери метод: формула для 2×2 или Гаусс для общего случая.','Проверь результат умножением A·A⁻¹ = I.'],
+    mistake:'Не существует «деления матриц» как обычных чисел. Умножение на A⁻¹ — это отдельная операция.',
+    tip:'Проверка A·A⁻¹ = I — отличный способ поймать знак или арифметическую ошибку.',
+    complete:'Обратная матрица существует не у каждой квадратной матрицы.'
+  },
+  {
+    id:7,title:'Ранг матрицы',short:'Сколько в матрице реально независимой информации.',
+    lead:'Ранг — это число линейно независимых строк (или столбцов). Он показывает, сколько «самостоятельных направлений» осталось после устранения лишних строк/столбцов.',
+    blocks:[
+      ['Через Гаусса','Приведи матрицу к ступенчатому виду. Число ненулевых строк равно рангу.'],
+      ['Через миноры','Ранг не меньше k, если есть ненулевой минор k-го порядка; максимальный такой порядок и есть ранг.'],
+      ['Связь с определителем','Для n×n: det A ≠ 0 означает rank A = n.']
+    ],
+    formula:'rank(A) = число ведущих элементов после Гаусса\nДля n×n: det A ≠ 0 ⇒ rank(A)=n.',
+    steps:['Проведи элементарные преобразования строк.','Получай нули под ведущими элементами.','Посчитай ненулевые строки.','Не пугайся дробей — можно умножать строку на ненулевое число.'],
+    mistake:'Ранг — не количество строк и не количество столбцов «по умолчанию». Это число независимых строк/столбцов.',
+    tip:'Самый надёжный вычислительный путь для учебных задач — Гаусс.',
+    complete:'Ранг измеряет независимость информации в матрице.'
+  },
+  {
+    id:8,title:'СЛАУ и метод Гаусса',short:'Как решать системы линейных уравнений без магии.',
+    lead:'Система линейных уравнений — несколько уравнений с общими неизвестными. Метод Гаусса превращает систему в более простую, но эквивалентную.',
+    blocks:[
+      ['Расширенная матрица','Коэффициенты записываем слева, свободные члены — справа: [A|b].'],
+      ['Что можно делать','Менять строки местами; умножать строку на ненулевое число; прибавлять к строке другую строку, умноженную на число.'],
+      ['Что получаем','Ступенчатый вид. Затем идём снизу вверх и находим неизвестные.']
+    ],
+    formula:'Типичные признаки:\n[0 0 | c], c≠0  ⇒ решений нет.\n[0 0 | 0] + свободная переменная ⇒ решений бесконечно много.',
+    steps:['Запиши расширенную матрицу системы.','Выбери первый ведущий элемент и занули под ним.','Повтори для следующего столбца.','Сделай обратный ход: подставляй найденные переменные вверх.','Подставь ответ обратно хотя бы в одно уравнение.'],
+    mistake:'Не дели на ноль и следи за тем, к какой строке относится операция.',
+    tip:'Пиши каждое преобразование отдельной строкой. Не делай пять действий в голове.',
+    complete:'Гаусс — универсальный рабочий алгоритм для СЛАУ.'
+  },
+  {
+    id:9,title:'Крамер и матричный метод',short:'Когда использовать det и обратную матрицу.',
+    lead:'Два метода полезно знать концептуально, но важно понимать, когда они применимы. Для больших систем чаще выигрывает Гаусс.',
+    blocks:[
+      ['Крамер','Для квадратной системы с det A ≠ 0: xᵢ = det Aᵢ / det A, где Aᵢ получена заменой i-го столбца на столбец свободных членов.'],
+      ['Матричный метод','Если AX = b и A обратима, то X = A⁻¹b.'],
+      ['Смысл','Оба метода опираются на обратимость матрицы A; это связывает системы с определителем и обратной матрицей.']
+    ],
+    formula:'AX=b\nесли A⁻¹ существует, то X=A⁻¹b\n\nПравило Крамера: xᵢ = Δᵢ / Δ, Δ=det A.',
+    steps:['Определи квадратность системы.','Проверь det A ≠ 0.','Для маленьких систем Крамер может быть удобен.','Для общего случая уверенно владей Гауссом.'],
+    mistake:'Правило Крамера не заменяет понимание Гаусса. Для экзамена часто спрашивают, почему метод вообще работает и при каком условии.',
+    tip:'Запомни связку: det ≠ 0 → обратимость → единственное решение квадратной СЛАУ.',
+    complete:'Умение видеть связи между темами важнее отдельных формул.'
+  },
+  {
+    id:10,title:'Векторы и линейные комбинации',short:'Векторы, координаты, зависимость и базис.',
+    lead:'Вектор можно представить как стрелку или как набор координат. Линейная комбинация — способ собирать новые векторы из старых умножением на числа и сложением.',
+    blocks:[
+      ['Линейная комбинация','α₁v₁ + α₂v₂ + … + αₖvₖ. Коэффициенты αᵢ — обычные числа.'],
+      ['Линейная зависимость','Есть нетривиальная комбинация, дающая нулевой вектор. То есть один из векторов можно выразить через остальные.'],
+      ['Базис','Набор независимых векторов, через который однозначно выражается любой вектор пространства.']
+    ],
+    formula:'v = α₁e₁ + … + αₙeₙ\nНулевая линейная комбинация: 0·v₁+…+0·vₖ=0 всегда.',
+    steps:['Переводи задачу на координаты.','Если ищешь зависимость — приравняй линейную комбинацию к нулю.','Получишь СЛАУ относительно коэффициентов.','Нетривиальное решение СЛАУ означает зависимость.'],
+    mistake:'«Три вектора» ещё не означает «базис». Нужно проверить независимость и соответствие размерности.',
+    tip:'Линейная алгебра любит превращать геометрический вопрос в СЛАУ.',
+    complete:'Векторная часть и матрицы связаны через одну и ту же идею линейности.'
+  },
+  {
+    id:11,title:'Скалярное и векторное произведения',short:'Угол, длина, перпендикулярность и площадь.',
+    lead:'Эти операции связывают алгебру с геометрией. Скалярное произведение даёт число, векторное — вектор, перпендикулярный двум исходным.',
+    blocks:[
+      ['Скалярное','a·b = |a||b|cosθ. В координатах: a₁b₁+a₂b₂+a₃b₃. Если a·b=0, векторы перпендикулярны.'],
+      ['Векторное','a×b — вектор, перпендикулярный a и b; его длина равна площади параллелограмма: |a×b|=|a||b|sinθ.'],
+      ['Смешанное','a·(b×c) даёт ориентированный объём параллелепипеда по модулю.']
+    ],
+    formula:'a·b = a₁b₁+a₂b₂+a₃b₃\n|a×b| = |a||b|sinθ\nV = |a·(b×c)|',
+    steps:['Запиши координаты.','Выбери нужное произведение.','Аккуратно посчитай по координатной формуле.','Для геометрического смысла проверь единицы: число, длина, площадь, объём.'],
+    mistake:'Скалярное произведение — число, векторное — вектор. Это принципиально разные объекты.',
+    tip:'Ноль у скалярного произведения часто означает перпендикулярность; ноль у векторного — параллельность или один из векторов нулевой.',
+    complete:'Сначала выясни, какой объект должен получиться: число или вектор.'
+  },
+  {
+    id:12,title:'Экзаменационная связка',short:'Как темы склеиваются в одну систему.',
+    lead:'На экзамене темы редко живут по отдельности. Определитель связан с обратимостью; ранг — с независимостью; Гаусс — и с рангом, и с СЛАУ.',
+    blocks:[
+      ['Матрица → СЛАУ','Коэффициенты системы образуют матрицу A, а свободные члены — столбец b.'],
+      ['Определитель → обратимость','Для квадратной A: det A≠0 ⇔ существует A⁻¹.'],
+      ['Гаусс → ранг и решения','Ступенчатый вид даёт rank(A), а также помогает классифицировать СЛАУ.']
+    ],
+    formula:'det A ≠ 0\n⇓\nrank A = n\n⇓\nA⁻¹ существует\n⇓\nAX=b имеет единственное решение для любого b.',
+    steps:['Увидел квадратную матрицу → подумай про det и обратимость.','Увидел систему → подумай про расширенную матрицу и Гаусса.','Увидел «зависимы ли векторы?» → подумай про СЛАУ/ранг.','Увидел «найти угол/перпендикулярность» → скалярное произведение.'],
+    mistake:'Самая частая проблема — знать формулы отдельно, но не узнавать тип задачи.',
+    tip:'После каждого решения отвечай себе: «почему именно этот метод подходит?»',
+    complete:'Экзамен становится легче, когда ты видишь связи между главами.'
+  }
+];
+
+const state = JSON.parse(localStorage.getItem('la_state') || '{}');
+state.done = state.done || {};
+state.correct = state.correct || 0;
+state.answered = state.answered || 0;
+state.streak = state.streak || 0;
+let currentTopic = 1;
+let trainerMode = 'det2';
+let task = null;
+let exam = {items:[],i:0,score:0,answered:false};
+
+const trainerModes = [
+  {id:'det2',name:'Определитель 2×2'},
+  {id:'matmul',name:'Матрицы 2×2'},
+  {id:'gauss2',name:'СЛАУ 2×2'},
+  {id:'dot',name:'Скалярное произведение'},
+  {id:'perm',name:'Знак перестановки'}
+];
+
+function save(){localStorage.setItem('la_state',JSON.stringify(state)); updateProgress();}
+function updateProgress(){
+  const done = Object.values(state.done).filter(Boolean).length;
+  const pct = Math.round(done/topics.length*100);
+  document.getElementById('progressText').textContent=pct+'%';
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('doneCount').textContent=done;
+  document.getElementById('correctCount').textContent=state.correct;
+  document.getElementById('streakCount').textContent=state.streak;
+}
+function go(view,id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(view).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  if(view==='theory' && id) selectTopic(id); 
+  if(view==='trainer' && !task) newTask();
+  if(view==='exam' && exam.items.length===0) startExam();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));
+
+function renderTopics(){
+  document.getElementById('topicGrid').innerHTML = topics.map(t=>`<div class="card topic" onclick="go('theory',${t.id})"><div class="topic-top"><span class="num">ТЕМА ${String(t.id).padStart(2,'0')}</span><span class="done">${state.done[t.id]?'✓ пройдено':''}</span></div><h4>${t.title}</h4><p>${t.short}</p></div>`).join('');
+  renderSide();
+}
+function renderSide(filter=''){
+  const arr=topics.filter(t=>(t.title+' '+t.short).toLowerCase().includes(filter.toLowerCase()));
+  document.getElementById('sideTopics').innerHTML=arr.map(t=>`<button class="side-item ${t.id===currentTopic?'active':''}" onclick="selectTopic(${t.id})">${t.id}. ${t.title}${state.done[t.id]?' ✓':''}<small>${t.short}</small></button>`).join('') || '<div class="muted" style="padding:8px">Ничего не найдено.</div>';
+}
+function selectTopic(id){
+  currentTopic=id; renderSide(document.getElementById('theorySearch').value || '');
+  const t=topics.find(x=>x.id===id);
+  document.getElementById('theoryContent').innerHTML=`
+    <div class="crumb">Тема ${t.id} из ${topics.length}</div>
+    <h2>${t.title}</h2>
+    <p class="lead">${t.lead}</p>
+    <div class="explain">${t.blocks.map(([h,p])=>`<div class="box"><h4>${h}</h4><p>${p}</p></div>`).join('')}</div>
+    <div class="formula">${t.formula}</div>
+    <h3>Как решать задачу</h3>
+    <div class="steps">${t.steps.map(s=>`<div class="step">${s}</div>`).join('')}</div>
+    <div class="mistake"><b>Частая ошибка.</b> ${t.mistake}</div>
+    <div class="tip"><b>Запомни.</b> ${t.tip}</div>
+    <div class="theory-actions"><button class="primary-btn" onclick="markDone(${t.id})">${state.done[t.id]?'✓ Тема пройдена':'Отметить тему пройденной'}</button><button class="ghost-btn" onclick="go('trainer')">Сразу в тренажёр →</button></div>
+    <div class="footer-note"><b>Микро‑цель:</b> ${t.complete}</div>`;
+}
+function markDone(id){state.done[id]=true;save();selectTopic(id);renderTopics();}
+document.getElementById('theorySearch').addEventListener('input',e=>renderSide(e.target.value));
+
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function genDet(){
+  const a=rand(-6,7),b=rand(-6,7),c=rand(-6,7),d=rand(-6,7);
+  return {mode:'det2',question:`Вычисли det A для A = [[${a}, ${b}], [${c}, ${d}]].`,answer:a*d-b*c,explain:`Для 2×2: det A = ad − bc = ${a}·${d} − ${b}·${c}.`,type:'number'}
+}
+function genMul(){
+  const A=[[rand(-3,4),rand(-3,4)],[rand(-3,4),rand(-3,4)]]; const B=[[rand(-3,4),rand(-3,4)],[rand(-3,4),rand(-3,4)]];
+  const C=A.map((r,i)=>[r[0]*B[0][0]+r[1]*B[1][0],r[0]*B[0][1]+r[1]*B[1][1]]);
+  return {mode:'matmul',question:`Найди (1,1) элемент произведения A·B, если A=[${A[0]} ; ${A[1]}], B=[${B[0]} ; ${B[1]}].`,answer:C[0][0],explain:`Берём строку 1 A и столбец 1 B: ${A[0][0]}·${B[0][0]} + ${A[0][1]}·${B[1][0]} = ${C[0][0]}.`,type:'number'}
+}
+function genGauss(){
+  const x=rand(-4,4),y=rand(-4,4); const a=rand(1,4),b=rand(1,4),c=rand(1,4),d=rand(1,4); if(a*d===b*c) return genGauss();
+  const e=a*x+b*y, f=c*x+d*y;
+  return {mode:'gauss2',question:`Реши систему: ${a}x + ${b}y = ${e};  ${c}x + ${d}y = ${f}. Введи x и y через пробел.`,answer:`${x} ${y}`,explain:`Подставка даёт точное решение x=${x}, y=${y}. На бумаге это решается методом Гаусса или Крамера.`,type:'pair'}
+}
+function genDot(){
+  const a=[rand(-5,5),rand(-5,5),rand(-5,5)],b=[rand(-5,5),rand(-5,5),rand(-5,5)]; const ans=a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  return {mode:'dot',question:`Вычисли a·b для a=(${a.join(', ')}), b=(${b.join(', ')}).`,answer:ans,explain:`a·b = ${a.map((v,i)=>v+'·'+b[i]).join(' + ')} = ${ans}.`,type:'number'}
+}
+function genPerm(){
+  let p=[1,2,3,4].sort(()=>Math.random()-.5); let inv=0; for(let i=0;i<p.length;i++)for(let j=i+1;j<p.length;j++)if(p[i]>p[j])inv++;
+  return {mode:'perm',question:`Перестановка: ${p.join(' ')}. Она чётная или нечётная?`,answer:inv%2===0?'чётная':'нечётная',explain:`Число инверсий = ${inv}. ${inv%2===0?'Оно чётное → знак +1.':'Оно нечётное → знак −1.'}`,type:'text'}
+}
+function genTask(){return ({det2:genDet,matmul:genMul,gauss2:genGauss,dot:genDot,perm:genPerm})[trainerMode]()}
+function newTask(){task=genTask();renderTask()}
+function renderTask(){
+  document.querySelectorAll('.trainer-tab').forEach(b=>b.classList.toggle('active',b.dataset.mode===trainerMode));
+  document.getElementById('trainerLabel').textContent=trainerModes.find(x=>x.id===trainerMode).name;
+  document.getElementById('taskText').textContent=task.question;
+  const ar=document.getElementById('answerRow');
+  const ph=task.type==='pair'?'например: 2 -1':'твoй ответ';
+  ar.innerHTML=`<input id="taskInput" placeholder="${ph}" autocomplete="off"><button class="ghost-btn" onclick="newTask()">Пропустить</button>`;
+  document.getElementById('feedback').className='feedback'; document.getElementById('feedback').textContent='';
+  document.getElementById('taskInput').focus();
+}
+function checkTask(){
+  const v=document.getElementById('taskInput').value.trim();
+  let ok=false;
+  if(task.type==='number') ok=Number(v.replace(',','.'))===Number(task.answer);
+  else if(task.type==='pair') ok=v.replace(/[,;]+/g,' ').replace(/\s+/g,' ').trim()===task.answer;
+  else ok=v.toLowerCase()===task.answer.toLowerCase();
+  const fb=document.getElementById('feedback'); fb.className='feedback show '+(ok?'ok':'bad');
+  fb.innerHTML=ok?`Верно! ${task.explain}`:`Пока нет. Правильный ответ: <b>${task.answer}</b>. ${task.explain}`;
+  state.answered++; if(ok){state.correct++;state.streak++;}else{state.streak=0;} save();
+}
+function showHint(){
+  const hint={det2:'Вспомни формулу ad−bc.',matmul:'Строка первой матрицы × столбец второй.',gauss2:'Можно сначала убрать одну неизвестную из второго уравнения.',dot:'Перемножь соответствующие координаты и сложи.',perm:'Посчитай пары, где большее число стоит слева от меньшего.'}[trainerMode];
+  const fb=document.getElementById('feedback');fb.className='feedback show';fb.textContent='Подсказка: '+hint;
+}
+
+function renderTrainerTabs(){
+  document.getElementById('trainerTabs').innerHTML=trainerModes.map(m=>`<button class="tab-btn trainer-tab ${m.id===trainerMode?'active':''}" data-mode="${m.id}">${m.name}</button>`).join('');
+  document.querySelectorAll('.trainer-tab').forEach(b=>b.addEventListener('click',()=>{trainerMode=b.dataset.mode;newTask()}));
+}
+
+const examBank=[
+  {q:'Какой размер имеет произведение (2×3)(3×4)?',o:['2×3','3×3','2×4','4×2'],a:2,e:'Внутренние размеры 3 совпали, наружные остаются 2×4.'},
+  {q:'Для [[a,b],[c,d]] чему равен det?',o:['ab−cd','ad−bc','ac−bd','a+b+c+d'],a:1,e:'Формула 2×2: ad−bc.'},
+  {q:'Что означает det A = 0 для квадратной A?',o:['A обязательно единичная','A обратима','A вырождена, обратной матрицы нет','A имеет ранг n'],a:2,e:'det A=0 означает вырожденность.'},
+  {q:'Что происходит с определителем при перестановке двух строк?',o:['Не меняется','Меняет знак','Становится 0','Умножается на 2'],a:1,e:'Перестановка двух строк меняет знак определителя.'},
+  {q:'Что такое алгебраическое дополнение Aᵢⱼ?',o:['Только Mᵢⱼ','(−1)^(i+j)Mᵢⱼ','aᵢⱼ²','Сумма строки i'],a:1,e:'Дополнение — минор со знаком.'},
+  {q:'Как найти ранг после приведения к ступенчатому виду?',o:['По числу столбцов','По сумме элементов','По числу ненулевых строк','По определителю'],a:2,e:'В ступенчатом виде ранг равен числу ненулевых строк.'},
+  {q:'Какая строковая операция запрещена?',o:['Поменять строки местами','Умножить строку на 2','Прибавить 3 раза одну строку к другой','Разделить строку на 0'],a:3,e:'Деление на ноль недопустимо.'},
+  {q:'Когда у квадратной матрицы существует обратная?',o:['Всегда','Когда det A ≠ 0','Когда det A = 0','Только для 2×2'],a:1,e:'Для квадратной A: обратимость эквивалентна ненулевому определителю.'},
+  {q:'Если a·b = 0 и оба вектора ненулевые, что верно?',o:['Они параллельны','Они перпендикулярны','Они равны','Они противоположны'],a:1,e:'Скалярное произведение ненулевых взаимно перпендикулярных векторов равно 0.'},
+  {q:'Что означает линейная зависимость векторов?',o:['Они все одинаковые','Есть нетривиальная линейная комбинация, дающая 0','У них одинаковая длина','У них разные координаты'],a:1,e:'Зависимость означает существование нетривиальной нулевой линейной комбинации.'},
+  {q:'Если AX=b и A⁻¹ существует, то решение равно…',o:['X=A+b','X=A⁻¹b','X=Ab⁻¹','X=b−A'],a:1,e:'Домножаем слева на A⁻¹: X=A⁻¹b.'},
+  {q:'Что лучше всего описывает метод Гаусса?',o:['Перебор всех перестановок','Преобразование системы к ступенчатому виду','Нахождение только det','Только геометрический способ'],a:1,e:'Гаусс систематически упрощает систему обратимыми строковыми преобразованиями.'}
+];
+function startExam(){exam={items:[...examBank].sort(()=>Math.random()-.5),i:0,score:0,answered:false};renderExam();}
+function renderExam(){
+  const item=exam.items[exam.i]; exam.answered=false;
+  document.getElementById('examMeta').textContent=`Вопрос ${exam.i+1} из ${exam.items.length}`;
+  document.getElementById('examQuestion').textContent=item.q;
+  document.getElementById('examOptions').innerHTML=item.o.map((x,i)=>`<button class="option" onclick="chooseExam(${i})">${String.fromCharCode(65+i)}. ${x}</button>`).join('');
+  document.getElementById('examFeedback').className='feedback';document.getElementById('examFeedback').textContent='';
+  document.getElementById('examScore').textContent=`${exam.score} / ${exam.i}`;
+  document.getElementById('examBar').style.width=(exam.i/exam.items.length*100)+'%';
+}
+function chooseExam(i){
+  if(exam.answered)return;
+  exam.answered=true;const item=exam.items[exam.i];const buttons=[...document.querySelectorAll('.option')];buttons[i].classList.add('selected');buttons[item.a].classList.add('selected');
+  const ok=i===item.a;if(ok)exam.score++; 
+  const fb=document.getElementById('examFeedback');fb.className='feedback show '+(ok?'ok':'bad');fb.innerHTML=(ok?'Верно. ':'Не совсем. ')+item.e;
+  document.getElementById('examScore').textContent=`${exam.score} / ${exam.i+1}`;
+  document.getElementById('examBar').style.width=((exam.i+1)/exam.items.length*100)+'%';
+}
+function nextExam(){
+  if(!exam.items.length)return startExam();
+  if(!exam.answered){document.getElementById('examHint').textContent='Сначала выбери ответ.';return;}
+  if(exam.i<exam.items.length-1){exam.i++;renderExam();}
+  else{
+    document.getElementById('examHint').textContent=`Вариант закончен. Результат: ${exam.score} из ${exam.items.length}. Повтори темы, где были ошибки, и пройди вариант ещё раз.`;
+    document.getElementById('examBar').style.width='100%';
+  }
+}
+
+renderTopics();renderTrainerTabs();updateProgress();selectTopic(1);newTask();
+if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
